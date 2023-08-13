@@ -1,0 +1,52 @@
+using NativeWebSocket;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace {{ spec.title | caseUcfirst }}.Extensions
+{
+    public class SocketClientDispatcher : MonoBehaviour
+    {
+        private static SocketClientDispatcher instance;
+
+        readonly List<WebSocket> sockets = new();
+
+        #region Unity events
+#if !UNITY_WEBGL || UNITY_EDITOR
+        private void Update()
+        {
+            foreach(var socket in sockets)
+            {
+                socket.DispatchMessageQueue();
+            }
+        }
+#endif
+        private async void OnApplicationQuit()
+        {
+            foreach(var socket in sockets)
+            {
+                await socket.Close();
+            }
+        }
+        #endregion
+
+        public static void Register(WebSocket socket)
+        {
+            if (socket == null)
+                throw new System.ArgumentNullException(nameof(socket));
+            if (instance == null)
+            {
+                instance = new GameObject("[Appwrite socket dispatcher]").AddComponent<SocketClientDispatcher>();
+                DontDestroyOnLoad(instance.gameObject);
+            }
+            instance.sockets.Add(socket);
+        }
+        public static void Unregister(WebSocket socket)
+        {
+            if (socket == null)
+                throw new System.ArgumentNullException(nameof(socket));
+            if (instance == null)
+                return;
+            instance.sockets.Remove(socket);
+        }
+    }
+}

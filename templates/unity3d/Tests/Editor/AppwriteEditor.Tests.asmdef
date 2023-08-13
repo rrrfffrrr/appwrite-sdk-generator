@@ -1,6 +1,6 @@
 {
     "name": "AppwriteEditor.Tests",
-    "rootNamespace": "AppwriteEditor.Tests,
+    "rootNamespace": "AppwriteEditor.Tests",
     "references": [
         "Appwrite",
         "UnityEditor.TestRunner",

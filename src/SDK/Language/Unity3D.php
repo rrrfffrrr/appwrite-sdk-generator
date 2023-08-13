@@ -161,6 +161,16 @@ class Unity3D extends DotNet
             ],
             [
                 'scope'         => 'default',
+                'destination'   => '/Runtime/Extensions/SocketClientDispatcher.cs',
+                'template'      => 'unity3d/Runtime/Extensions/SocketClientDispatcher.cs.twig',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/Extensions/SocketClientDispatcher.cs.meta',
+                'template'      => 'unity3d/Runtime/Extensions/SocketClientDispatcher.cs.meta',
+            ],
+            [
+                'scope'         => 'default',
                 'destination'   => '/Runtime/Models/OrderType.cs',
                 'template'      => 'unity3d/Runtime/Models/OrderType.cs.twig',
             ],
