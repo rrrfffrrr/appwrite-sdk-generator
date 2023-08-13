@@ -1,0 +1,17 @@
+{
+    "name": "Appwrite",
+    "rootNamespace": "Appwrite",
+    "references": [
+        "UniTask",
+        "endel.nativewebsocket"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

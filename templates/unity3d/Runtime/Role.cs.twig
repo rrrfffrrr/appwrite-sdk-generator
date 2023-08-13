@@ -1,0 +1,41 @@
+namespace Appwrite
+{
+    public static class Role
+    {
+        public static string Any()
+        {
+            return "any";
+        }
+
+        public static string User(string id, string status = default)
+        {
+            return string.IsNullOrEmpty(status)
+                ? $"user:{id}"
+                : $"user:{id}/{status}";
+        }
+
+        public static string Users(string status = default)
+        {
+            return string.IsNullOrEmpty(status)
+                ? "users" :
+                $"users/{status}";
+        }
+
+        public static string Guests()
+        {
+            return "guests";
+        }
+
+        public static string Team(string id, string role = default)
+        {
+            return string.IsNullOrEmpty(role)
+                ? $"team:{id}"
+                : $"team:{id}/{role}";
+        }
+
+        public static string Member(string id)
+        {
+            return $"member:{id}";
+        }
+    }
+}
