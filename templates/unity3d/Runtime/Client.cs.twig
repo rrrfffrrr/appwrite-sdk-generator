@@ -93,6 +93,7 @@ namespace {{ spec.title | caseUcfirst }}
             var request = new UnityWebRequest(uri, method.ToString());
             if (useSelfSigned)
                 request.certificateHandler = new SelfSignedCertificateHandler();
+            request.downloadHandler = new DownloadHandlerBuffer();
 
             if ("multipart/form-data".Equals(headers["content-type"], StringComparison.OrdinalIgnoreCase))
             {
@@ -154,8 +155,13 @@ namespace {{ spec.title | caseUcfirst }}
                         accepts.Add(header.Value);
                 }
             }
+            request.SetRequestHeader("Accept", "*/*");
 
-            await request.SendWebRequest();
+            var op = request.SendWebRequest();
+            while(!op.isDone)
+            {
+                await UniTask.NextFrame();
+            }
 
             var contentType = request.GetResponseHeader("Content-Type");
 
@@ -197,21 +203,60 @@ namespace {{ spec.title | caseUcfirst }}
             string fileId = null,
             Action<UploadProgress> onProgress = null) where TResult : class
         {
+            /*
+            if (!Uri.TryCreate(endpoint + path, UriKind.RelativeOrAbsolute, out var uri))
+                uri = new Uri(endpoint + path);
+
+            var request = new UnityWebRequest(uri, UnityWebRequest.kHttpVerbPOST);
+            if (useSelfSigned)
+                request.certificateHandler = new SelfSignedCertificateHandler();
+            request.downloadHandler = new DownloadHandlerBuffer();
+
             var size = 0L;
             switch(input.SourceType)
             {
                 case "path":
-                    var info = new FileInfo(input.Path);
-                    input.Data = info.OpenRead();
-                    size = info.Length;
+                    request.uploadHandler = new UploadHandlerFile(input.Path);
+                    size = request.uploadHandler.data.Length;
                     break;
                 case "stream":
-                    size = (input.Data as Stream).Length;
+                    var bytes = default(byte[]);
+                    using (var stream = new MemoryStream())
+                    {
+                        ((Stream)input.Data).CopyTo(stream);
+                        bytes = stream.ToArray();
+                    }
+                    request.uploadHandler = new UploadHandlerRaw(bytes);
+                    size = request.uploadHandler.data.Length;
                     break;
                 case "bytes":
-                    size = ((byte[])input.Data).Length;
+                    request.uploadHandler = new UploadHandlerRaw((byte[])input.Data);
+                    size = request.uploadHandler.data.Length;
                     break;
             };
+
+            var accepts = new List<string>();
+            foreach (var header in _headers)
+            {
+                request.SetRequestHeader(header.Key, header.Value);
+                if (header.Key.Equals("content-type", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!accepts.Contains(header.Value))
+                        accepts.Add(header.Value);
+                }
+            }
+
+            foreach (var header in headers)
+            {
+                request.SetRequestHeader(header.Key, header.Value);
+                if (header.Key.Equals("content-type", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!accepts.Contains(header.Value))
+                        accepts.Add(header.Value);
+                }
+            }
+           
+            await request.SendWebRequest();
 
             var offset = 0L;
             var buffer = new byte[Math.Min(size, ChunkSize)];
@@ -235,15 +280,14 @@ namespace {{ spec.title | caseUcfirst }}
 
                 parameters[paramName] = content;
 
-                return await Call<TResult>("POST", path, headers, parameters);
+                return await Call<TResult>(EHttpMethods.POST, path, headers, parameters);
             }
 
             if (!string.IsNullOrEmpty(fileId) && fileId != "unique()")
             {
                 // Make a request to check if a file already exists
-                var current = await Call<JObject>("GET", $"{path}/{fileId}", headers, new JObject());
-                var chunksUploaded = (long)current["chunksUploaded"];
-                offset = Math.Min(chunksUploaded * ChunkSize, size);
+                var file = await Call<Models.File>(EHttpMethods.GET, $"{path}/{fileId}", headers, new JObject());
+                offset = Math.Min(file.ChunksUploaded * ChunkSize, size);
             }
 
             TResult result = default;
@@ -305,6 +349,8 @@ namespace {{ spec.title | caseUcfirst }}
             }
 
             return result;
+            */
+            return default;
         }
     }
 }
