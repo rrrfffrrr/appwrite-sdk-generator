@@ -1,0 +1,15 @@
+using System;
+
+namespace {{spec.title | caseUcfirst}}
+{
+    public class AppwriteException : Exception
+    {
+        public int StatusCode { get; private set; }
+
+        public AppwriteException(string message, int statusCode) : base(message)
+        {
+            StatusCode = statusCode;
+        }
+    }
+}
+

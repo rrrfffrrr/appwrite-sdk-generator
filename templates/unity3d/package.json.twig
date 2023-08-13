@@ -1,12 +1,14 @@
 {
   "name": "{{ spec.title|caseDash }}",
+  "version": "{{ sdk.version }}",
+  "description": "{{ sdk.shortDescription }}",
+  "displayName": "{{ spec.title }}",
+  "unity": "2019.3",
   "author": {
-    "name": "{{ spec.title }}",
+    "name": "{{ spec.contactName }}",
+    "email": "{{ spec.contactEmail }}",
     "url": "{{ spec.contactURL }}"
   },
-  "unity": "2019.3",
-  "description": "{{ sdk.shortDescription }}",
-  "version": "{{ sdk.version }}",
   "license": "{{ sdk.license }}",
   "keywords": [ "appwrite" ],
   "category": "Scripts"

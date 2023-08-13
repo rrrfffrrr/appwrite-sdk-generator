@@ -21,13 +21,14 @@ class Unity3D extends DotNet
     public function getFiles(): array
     {
         return [
+            // Package
             [
                 'scope'         => 'default',
                 'destination'   => 'CHANGELOG.md',
                 'template'      => 'unity3d/CHANGELOG.md.twig',
             ],
             [
-                'scope'         => 'default',
+                'scope'         => 'copy',
                 'destination'   => 'CHANGELOG.md.meta',
                 'template'      => 'unity3d/CHANGELOG.md.meta',
             ],
@@ -47,7 +48,7 @@ class Unity3D extends DotNet
                 'template'      => 'unity3d/LICENSE.md.twig',
             ],
             [
-                'scope'         => 'default',
+                'scope'         => 'copy',
                 'destination'   => 'LICENSE.md.meta',
                 'template'      => 'unity3d/LICENSE.md.meta',
             ],
@@ -57,7 +58,7 @@ class Unity3D extends DotNet
                 'template'      => 'unity3d/package.json.twig',
             ],
             [
-                'scope'         => 'default',
+                'scope'         => 'copy',
                 'destination'   => 'package.json.meta',
                 'template'      => 'unity3d/package.json.meta',
             ],
@@ -67,32 +68,29 @@ class Unity3D extends DotNet
                 'template'      => 'unity3d/README.md.twig',
             ],
             [
-                'scope'         => 'default',
+                'scope'         => 'copy',
                 'destination'   => 'README.md.meta',
                 'template'      => 'unity3d/README.md.meta',
             ],
             [
-                'scope'         => 'default',
+                'scope'         => 'copy',
                 'destination'   => 'Runtime.meta',
                 'template'      => 'unity3d/Runtime.meta',
             ],
-            [
-                'scope'         => 'default',
-                'destination'   => 'Tests.meta',
-                'template'      => 'unity3d/Tests.meta',
-            ],
+            // Document
             [
                 'scope'         => 'method',
                 'destination'   => 'Documentation~/examples/{{service.name | caseLower}}/{{method.name | caseDash}}.md',
                 'template'      => 'unity3d/Documentation~/example.md.twig',
             ],
+            // Runtime
             [
-                'scope'         => 'default',
+                'scope'         => 'copy',
                 'destination'   => '/Runtime/Appwrite.asmdef',
                 'template'      => 'unity3d/Runtime/Appwrite.asmdef',
             ],
             [
-                'scope'         => 'default',
+                'scope'         => 'copy',
                 'destination'   => '/Runtime/Appwrite.asmdef.meta',
                 'template'      => 'unity3d/Runtime/Appwrite.asmdef.meta',
             ],
@@ -102,9 +100,19 @@ class Unity3D extends DotNet
                 'template'      => 'unity3d/Runtime/Client.cs.twig',
             ],
             [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/Client.cs.meta',
+                'template'      => 'unity3d/Runtime/Client.cs.meta',
+            ],
+            [
                 'scope'         => 'default',
-                'destination'   => '/Runtime/{{ spec.title | caseUcfirst }}Exception.cs',
-                'template'      => 'unity3d/Runtime/Exception.cs.twig',
+                'destination'   => '/Runtime/AppwriteException.cs',
+                'template'      => 'unity3d/Runtime/AppwriteException.cs.twig',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/AppwriteException.cs.meta',
+                'template'      => 'unity3d/Runtime/AppwriteException.cs.meta',
             ],
             [
                 'scope'         => 'default',
@@ -112,9 +120,19 @@ class Unity3D extends DotNet
                 'template'      => 'unity3d/Runtime/ID.cs.twig',
             ],
             [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/ID.cs.meta',
+                'template'      => 'unity3d/Runtime/ID.cs.meta',
+            ],
+            [
                 'scope'         => 'default',
                 'destination'   => '/Runtime/Permission.cs',
                 'template'      => 'unity3d/Runtime/Permission.cs.twig',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/Permission.cs.meta',
+                'template'      => 'unity3d/Runtime/Permission.cs.meta',
             ],
             [
                 'scope'         => 'default',
@@ -127,9 +145,19 @@ class Unity3D extends DotNet
                 'template'      => 'unity3d/Runtime/Role.cs.twig',
             ],
             [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/Role.cs.meta',
+                'template'      => 'unity3d/Runtime/Role.cs.meta',
+            ],
+            [
                 'scope'         => 'default',
                 'destination'   => '/Runtime/Extensions/Extensions.cs',
                 'template'      => 'unity3d/Runtime/Extensions/Extensions.cs.twig',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/Extensions/Extensions.cs.meta',
+                'template'      => 'unity3d/Runtime/Extensions/Extensions.cs.meta',
             ],
             [
                 'scope'         => 'default',
@@ -160,7 +188,43 @@ class Unity3D extends DotNet
                 'scope'         => 'definition',
                 'destination'   => '/Runtime/Models/{{ definition.name | caseUcfirst | overrideIdentifier }}.cs',
                 'template'      => 'unity3d/Runtime/Models/Model.cs.twig',
-            ]
+            ],
+            // Test
+            [
+                'scope'         => 'copy',
+                'destination'   => 'Tests.meta',
+                'template'      => 'unity3d/Tests.meta',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Tests/Editor.meta',
+                'template'      => 'unity3d/Tests/Editor.meta',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Tests/Editor/AppwriteEditor.Tests.asmdef',
+                'template'      => 'unity3d/Tests/Editor/AppwriteEditor.Tests.asmdef',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Tests/Editor/AppwriteEditor.Tests.asmdef.meta',
+                'template'      => 'unity3d/Tests/Editor/AppwriteEditor.Tests.asmdef.meta',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Tests/Runtime.meta',
+                'template'      => 'unity3d/Tests/Runtime.meta',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Tests/Runtime/Appwrite.Tests.asmdef',
+                'template'      => 'unity3d/Tests/Runtime/Appwrite.Tests.asmdef',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Tests/Runtime/Appwrite.Tests.asmdef.meta',
+                'template'      => 'unity3d/Tests/Runtime/Appwrite.Tests.asmdef.meta',
+            ],
         ];
     }
 }
