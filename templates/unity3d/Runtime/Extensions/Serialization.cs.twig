@@ -1,0 +1,31 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+using System.Collections.Generic;
+
+namespace {{ spec.title | caseUcfirst }}.Extensions
+{
+    public static class Serialization
+    {
+        public static JsonSerializerSettings DeserializerSettings { get; set; } = new JsonSerializerSettings
+        {
+            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            Converters = new List<JsonConverter>
+            {
+                new StringEnumConverter()
+            }
+        };
+
+        public static JsonSerializerSettings SerializerSettings { get; set; } = new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            Converters = new List<JsonConverter>
+            {
+                new StringEnumConverter()
+            }
+        };
+    }
+}

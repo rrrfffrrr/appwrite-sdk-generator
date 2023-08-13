@@ -1,0 +1,12 @@
+using UnityEngine.Networking;
+
+namespace {{ spec.title | caseUcfirst }}.Extensions
+{
+    public class SelfSignedCertificateHandler : CertificateHandler
+    {
+        protected override bool ValidateCertificate(byte[] certificateData)
+        {
+            return true;
+        }
+    }
+}
