@@ -16,6 +16,35 @@ class Unity3D extends DotNet
     }
 
     /**
+     * @param array $parameter
+     * @return string
+     */
+    public function getTypeName(array $parameter): string
+    {
+        switch ($parameter['type']) {
+            case self::TYPE_INTEGER:
+                return 'long';
+            case self::TYPE_NUMBER:
+                return 'double';
+            case self::TYPE_STRING:
+                return 'string';
+            case self::TYPE_FILE:
+                return 'InputFile';
+            case self::TYPE_BOOLEAN:
+                return 'bool';
+            case self::TYPE_ARRAY:
+                if (!empty($parameter['array']['type'])) {
+                    return 'List<' . $this->getTypeName($parameter['array']) . '>';
+                }
+                return 'JArray';
+            case self::TYPE_OBJECT:
+                return 'JObject';
+        }
+
+        return $parameter['type'];
+    }
+
+    /**
      * @return array
      */
     public function getFiles(): array
@@ -151,6 +180,16 @@ class Unity3D extends DotNet
             ],
             [
                 'scope'         => 'default',
+                'destination'   => '/Runtime/Extensions/EHttpMethods.cs',
+                'template'      => 'unity3d/Runtime/Extensions/EHttpMethods.cs.twig',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/Extensions/EHttpMethods.cs.meta',
+                'template'      => 'unity3d/Runtime/Extensions/EHttpMethods.cs.meta',
+            ],
+            [
+                'scope'         => 'default',
                 'destination'   => '/Runtime/Extensions/Extensions.cs',
                 'template'      => 'unity3d/Runtime/Extensions/Extensions.cs.twig',
             ],
@@ -158,6 +197,26 @@ class Unity3D extends DotNet
                 'scope'         => 'copy',
                 'destination'   => '/Runtime/Extensions/Extensions.cs.meta',
                 'template'      => 'unity3d/Runtime/Extensions/Extensions.cs.meta',
+            ],
+            [
+                'scope'         => 'default',
+                'destination'   => '/Runtime/Extensions/SelfSignedCertificateHandler.cs',
+                'template'      => 'unity3d/Runtime/Extensions/SelfSignedCertificateHandler.cs.twig',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/Extensions/SelfSignedCertificateHandler.cs.meta',
+                'template'      => 'unity3d/Runtime/Extensions/SelfSignedCertificateHandler.cs.meta',
+            ],
+            [
+                'scope'         => 'default',
+                'destination'   => '/Runtime/Extensions/Serialization.cs',
+                'template'      => 'unity3d/Runtime/Extensions/Serialization.cs.twig',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/Extensions/Serialization.cs.meta',
+                'template'      => 'unity3d/Runtime/Extensions/Serialization.cs.meta',
             ],
             [
                 'scope'         => 'default',
@@ -188,6 +247,11 @@ class Unity3D extends DotNet
                 'scope'         => 'default',
                 'destination'   => '/Runtime/Services/Service.cs',
                 'template'      => 'unity3d/Runtime/Services/Service.cs.twig',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Runtime/Services/Service.cs.meta',
+                'template'      => 'unity3d/Runtime/Services/Service.cs.meta',
             ],
             [
                 'scope'         => 'service',
@@ -222,6 +286,16 @@ class Unity3D extends DotNet
             ],
             [
                 'scope'         => 'copy',
+                'destination'   => '/Tests/Editor/Empty.cs',
+                'template'      => 'unity3d/Tests/Editor/Empty.cs',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Tests/Editor/Empty.cs.meta',
+                'template'      => 'unity3d/Tests/Editor/Empty.cs.meta',
+            ],
+            [
+                'scope'         => 'copy',
                 'destination'   => '/Tests/Runtime.meta',
                 'template'      => 'unity3d/Tests/Runtime.meta',
             ],
@@ -234,6 +308,16 @@ class Unity3D extends DotNet
                 'scope'         => 'copy',
                 'destination'   => '/Tests/Runtime/Appwrite.Tests.asmdef.meta',
                 'template'      => 'unity3d/Tests/Runtime/Appwrite.Tests.asmdef.meta',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Tests/Runtime/Empty.cs',
+                'template'      => 'unity3d/Tests/Runtime/Empty.cs',
+            ],
+            [
+                'scope'         => 'copy',
+                'destination'   => '/Tests/Runtime/Empty.cs.meta',
+                'template'      => 'unity3d/Tests/Runtime/Empty.cs.meta',
             ],
         ];
     }
