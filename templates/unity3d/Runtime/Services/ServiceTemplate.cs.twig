@@ -1,18 +1,19 @@
-{% import 'dotnet/base/utils.twig' as utils %}
+{% import 'unity3d/base/utils.twig' as utils %}
 
+using Cysharp.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using {{ spec.title | caseUcfirst }}.Models;
+using {{ spec.title | caseUcfirst }}.Extensions;
 
 namespace {{ spec.title | caseUcfirst }}.Services
 {
     public class {{ service.name | caseUcfirst }} : Service
     {
-        public {{ service.name | caseUcfirst }}(Client client) : base(client)
-        {
-        }
+        public {{ service.name | caseUcfirst }}(Client client) : base(client) { }
 
         {%~ for method in service.methods %}
         {%~ if method.title %}
@@ -25,34 +26,54 @@ namespace {{ spec.title | caseUcfirst }}.Services
         /// </para>
         {%~ endif %}
         /// </summary>
-        public Task{% if method.type != "webAuth" %}<{{ utils.resultType(spec.title, method) }}>{% endif %} {{ method.name | caseUcfirst }}({{ utils.method_parameters(method.parameters, method.consumes) }})
+        public UniTask{% if method.type != "webAuth" %}<{{ utils.resultType(spec.title, method) }}>{% endif %} {{ method.name | caseUcfirst }}({{ utils.method_parameters(method.parameters, method.consumes) }})
         {
             var path = "{{ method.path }}"{% if method.parameters.path | length == 0 %};{% endif %}
+            
+            {%~ for parameter in method.parameters.path %}
+                .Replace("{{ '{' ~ parameter.name | caseCamel ~ '}' }}", {{ parameter.name | caseCamel | escapeKeyword }}){% if loop.last %};{% endif %}
+            {%~ endfor %}
 
-		{{~ include('dotnet/base/params.twig') }}
+            var parameters = new JObject
+            {
+                {%~ for parameter in method.parameters.query | merge(method.parameters.body) %}
+                {% if parameter.type != 'file' %}["{{ parameter.name }}"] = {% if parameter.type == 'array' %}new JArray({{ utils.map_parameter(parameter) }}){% else %}{{ utils.map_parameter(parameter) }}{% endif %}{% if not loop.last %},{% endif %}{% else %}/* Ignore "{{ parameter.name }}" parameter */{% endif %}
+
+                {%~ endfor %}
+            };
+
+            var headers = new Dictionary<string, string>()
+            {
+                {%~ for key, header in method.headers %}
+                { "{{ key }}", "{{ header }}" }{% if not loop.last %},{% endif %}
+
+                {%~ endfor %}
+            };
 
         {%~ if method.type == 'location' %}
-		{{~ include('dotnet/base/requests/location.twig') }}
-		{%~ else %}
-
-			{%~ if method.responseModel %}
-            static {{ utils.resultType(spec.title, method) }} Convert(Dictionary<string, object> it) =>
-				{%~ if method.responseModel == 'any' %}
-                it;
-				{%~ else %}
-                {{ utils.resultType(spec.title, method) }}.From(map: it);
-				{%~ endif %}
-			{%~ endif %}
-
-			{%~ if 'multipart/form-data' in method.consumes %}
-			{{~ include('dotnet/base/requests/file.twig') }}
-			{%~ else %}
-
-			{{~ include('dotnet/base/requests/api.twig')}}
-			{%~ endif %}
-			{%~ endif %}
+        return _client.Call<byte[]>(EHttpMethods.{{ method.method | caseUpper }}, path, headers, parameters);
+		{%~ elseif 'multipart/form-data' in method.consumes %}
+        return _client.UploadFile<{{ utils.resultType(spec.title, method) }}>(
+            path,
+            headers,
+            parameters,
+            {%~ for parameter in method.parameters.all %}
+            {%~ if parameter.type == 'file' %}
+            {{ parameter.name }},
+            {%~ endif %}
+            {%~ endfor %}
+            {%~ for parameter in method.parameters.all %}
+            {%~ if parameter.type == 'file' %}
+            "{{ parameter.name }}",
+            {%~ endif %}
+            {%~ endfor %}
+            fileId,
+            onProgress
+        );
+        {%~ else %}
+        return _client.Call{% if method.type != 'webAuth' %}<{{ utils.resultType(spec.title, method) }}>{% endif %}(EHttpMethods.{{ method.method | caseUpper }}, path, headers, parameters);
+        {%~ endif %}
         }
-
     {%~ endfor %}
     }
 }

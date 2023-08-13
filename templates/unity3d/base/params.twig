@@ -4,12 +4,13 @@
 
             {%~ endfor %}
 
-            var parameters = new Dictionary<string, object?>()
+            var parameters = new JObject
             {
-                {%~ for parameter in method.parameters.query | merge(method.parameters.body) %}
-                { "{{ parameter.name }}", {{ utils.map_parameter(parameter) }} }{% if not loop.last %},{% endif %}
-
-                {%~ endfor %}
+                {%~ for parameter in method.parameters.query | merge(method.parameters.body) %}{% if parameter.type != 'file' %}
+                ["{{ parameter.name }}"] = {% if parameter.type == 'array' %}new JArray({{ utils.map_parameter(parameter) }}){% else %}{{ utils.map_parameter(parameter) }}{% endif %}{% if not loop.last %},{% endif %}
+                {% else %}
+                /* Ignore {{ parameter.name }} */
+                {% endif %}{%~ endfor %}
             };
 
             var headers = new Dictionary<string, string>()
